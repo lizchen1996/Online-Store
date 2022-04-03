@@ -4,6 +4,7 @@ const express = require("express");
 const http = require("http");
 const bodyParser = require("body-parser");
 const request = require("request");
+const _ = reqire("lodash");
 const app = express();
 
 app.use(bodyParser.urlencoded({extended: true}));

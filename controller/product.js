@@ -1,22 +1,79 @@
-const query = require('../db/conn.js');
+const query = require('../db/conn');
 
 module.exports = {
 
-  async getProducts(productObj){
-    let{name, price, description} = productObj;
-    if(productObj){
-      let sql = "select "
-      let resultData = await query(sql,[name]);
+  async getProductList(urlParams) {
+    let {
+      name,
+      price,
+      catagory
+    } = urlParams;
 
-    }else{
-      let sql = "select "
-      let resultData = await query(sql,[name]);
+    let sql = "select * from products where 1=1";
+    
+    if (name) {
+      sql += " and name=?";
     }
+    if (price) {
+      sql += " and price=?";
+    }
+    if (catagory) {
+      sql += " and catagory=?";
+    }
+
+    let resultData = await query(sql, [name, price, catagory]);
     return resultData;
   },
 
-  addProducts(){
-    
-  }
+  async addProduct(productObj) {
+    let {
+      name,
+      price,
+      description
+    } = productObj;
+    let sql = "insert into products (name, price, description) values (?,?,?)";
+    let resultData = await query(sql, [name, price, description]);
+    if (resultData) {
+      return {
+        msg: 'Success'
+      }
+    } else {
+      return {
+        msg: "Fail"
+      }
+    }
+  },
 
+  async updateProduct(id, productObj) {
+    let {
+      name,
+      price,
+      description
+    } = productObj;
+    let sql = "update products set name = ?, price = ?, description = ? where id = ?";
+    let resultData = await query(sql, [name, price, description, id]);
+    if (resultData.affectedRows > 0) {
+      return {
+        msg: 'Success'
+      }
+    } else {
+      return {
+        msg: "Fail"
+      }
+    }
+  },
+
+  async deleteProduct(id) {
+    let sql = "delete from products where id = ?";
+    let resultData = await query(sql, [id]);
+    if (resultData.affectedRows > 0) {
+      return {
+        msg: 'Success'
+      }
+    } else {
+      return {
+        msg: "Fail"
+      }
+    }
+  }
 };
